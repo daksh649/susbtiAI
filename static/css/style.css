@@ -1,0 +1,3175 @@
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+    color: #ffffff;
+    overflow-x: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Animated background particles */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(64, 224, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 64, 129, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(128, 255, 64, 0.03) 0%, transparent 50%);
+    animation: floatingBackground 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes floatingBackground {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(1deg); }
+    66% { transform: translateY(10px) rotate(-0.5deg); }
+}
+
+:root {
+    /* Dark Theme */
+    --bg-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+    --text-primary: #ffffff;
+    --text-secondary: #a0a9b8;
+    --text-muted: #6b7280;
+    
+    --card-bg: rgba(30, 41, 59, 0.8);
+    --card-bg-hover: rgba(40, 51, 69, 0.9);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 16px 64px rgba(0, 0, 0, 0.4);
+    
+    --sidebar-bg: rgba(15, 23, 42, 0.95);
+    --sidebar-border: rgba(255, 255, 255, 0.05);
+    
+    --accent-primary: #40e0ff;
+    --accent-secondary: #ff4081;
+    --accent-success: #00c851;
+    --accent-warning: #ffbb33;
+    --accent-error: #ff4444;
+    
+    --button-primary: linear-gradient(135deg, #40e0ff 0%, #0099cc 100%);
+    --button-secondary: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+    --button-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    
+    --glassmorphism-bg: rgba(255, 255, 255, 0.05);
+    --glassmorphism-border: rgba(255, 255, 255, 0.1);
+    --backdrop-blur: blur(20px);
+    
+    --shadow-glow: 0 0 20px rgba(64, 224, 255, 0.3);
+    --border-radius: 16px;
+    --border-radius-lg: 24px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+    --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-bg-hover: rgba(255, 255, 255, 0.95);
+    --card-border: rgba(0, 0, 0, 0.05);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 16px 64px rgba(0, 0, 0, 0.15);
+    
+    --sidebar-bg: rgba(248, 250, 252, 0.95);
+    --sidebar-border: rgba(0, 0, 0, 0.05);
+    
+    --glassmorphism-bg: rgba(255, 255, 255, 0.25);
+    --glassmorphism-border: rgba(0, 0, 0, 0.1);
+    --backdrop-blur: blur(20px);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Enhanced Sidebar */
+.sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    padding: 24px 16px;
+    border-right: 1px solid var(--sidebar-border);
+    transition: var(--transition);
+    position: relative;
+    z-index: 10;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--accent-primary) 50%, transparent 100%);
+}
+
+.sidebar.hidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    transform: translateX(-100%);
+}
+
+.folder-list {
+    margin-top: 32px;
+}
+
+.folder-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.folder-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    opacity: 0;
+    transition: var(--transition);
+    z-index: -1;
+}
+
+.folder-item:hover {
+    color: var(--text-primary);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-glow);
+}
+
+.folder-item:hover::before {
+    opacity: 0.1;
+}
+
+.folder-item.active {
+    background: var(--glassmorphism-bg);
+    border: 1px solid var(--glassmorphism-border);
+    box-shadow: var(--card-shadow);
+    transform: translateX(4px);
+}
+
+.folder-item .icon {
+    margin-right: 12px;
+    font-size: 18px;
+    transition: var(--transition);
+}
+
+.folder-item:hover .icon {
+    transform: scale(1.1);
+}
+
+.folder-item .count {
+    margin-left: auto;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 2px 8px rgba(64, 224, 255, 0.3);
+}
+
+.new-folder {
+    margin-top: 32px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.new-folder::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: var(--transition);
+}
+
+.new-folder:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.new-folder:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(64, 224, 255, 0.4);
+}
+
+.new-folder .icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Enhanced Main Content */
+.main-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.header {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 32px 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    position: relative;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 2px;
+}
+
+/* Enhanced Notes Grid */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    perspective: 1000px;
+}
+
+.notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.note-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--card-border);
+    padding: 24px;
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transform-style: preserve-3d;
+}
+
+.note-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: var(--transition);
+}
+
+.note-card:hover::before {
+    transform: scaleX(1);
+}
+
+.note-card:hover {
+    background: var(--card-bg-hover);
+    transform: translateY(-8px) rotateX(2deg);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--accent-primary);
+}
+
+.note-card.selected {
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 0 30px rgba(64, 224, 255, 0.3);
+    transform: scale(1.02);
+}
+
+.note-card.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 16px;
+    background: var(--glassmorphism-bg);
+    padding: 8px;
+    border-radius: 50%;
+    backdrop-filter: var(--backdrop-blur);
+}
+
+.note-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    line-height: 1.3;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.note-content {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    display: -webkit-box;
+    
+    -webkit-box-orient: vertical;
+}
+
+.note-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: auto;
+    font-weight: 500;
+}
+
+/* Enhanced Toolbar */
+.toolbar {
+    background: var(--glassmorphism-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--glassmorphism-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.toolbar .left,
+.toolbar .right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.toolbar button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.toolbar button:hover {
+    color: var(--text-primary);
+    background: var(--glassmorphism-bg);
+    transform: translateY(-1px);
+}
+
+.toolbar input {
+    background: var(--glassmorphism-bg);
+    border: 1px solid var(--glassmorphism-border);
+    padding: 10px 16px;
+    border-radius: 25px;
+    color: var(--text-primary);
+    width: 200px;
+    font-size: 14px;
+    transition: var(--transition);
+    backdrop-filter: var(--backdrop-blur);
+}
+
+.toolbar input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(64, 224, 255, 0.2);
+    width: 250px;
+}
+
+.toolbar input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Enhanced Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    animation: modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-content {
+    background: var(--card-bg);
+    backdrop-filter: var(--backdrop-blur);
+    margin: 3% auto;
+    padding: 32px;
+    border: 1px solid var(--card-border);
+    width: 95%;
+    max-width: 1200px;
+    border-radius: var(--border-radius-lg);
+    color: var(--text-primary);
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+/* Enhanced Form Elements */
+.input-section {
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    width: 100%;
+    margin-bottom: 8px;
+    display: block;
+}
+
+select, button, input[type="file"] {
+    padding: 14px 20px;
+    font-size: 16px;
+    border: 2px solid var(--glassmorphism-border);
+    border-radius: var(--border-radius);
+    background: var(--glassmorphism-bg);
+    color: var(--text-primary);
+    transition: var(--transition);
+    width: 100%;
+    font-weight: 500;
+    backdrop-filter: var(--backdrop-blur);
+}
+
+select:hover, button:hover:not(:disabled), input[type="file"]:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(64, 224, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+button {
+    background: var(--button-primary);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: var(--transition);
+}
+
+button:hover:not(:disabled)::before {
+    width: 300px;
+    height: 300px;
+}
+
+button:disabled {
+    background: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Enhanced Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    font-size: 16px;
+    color: var(--text-primary);
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+th, td {
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--card-border);
+    transition: var(--transition);
+    position: relative;
+}
+
+th {
+    background: var(--glassmorphism-bg);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+    color: var(--accent-primary);
+}
+
+td {
+    min-width: 150px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+tr:hover td {
+    background: var(--card-bg-hover);
+    transform: scale(1.02);
+}
+
+.editable {
+    background: linear-gradient(135deg, rgba(64, 224, 255, 0.1), rgba(255, 64, 129, 0.1)) !important;
+    border: 2px solid var(--accent-primary) !important;
+}
+
+.selected {
+    background: var(--accent-secondary) !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(255, 64, 129, 0.4);
+}
+
+.highlight {
+    background: linear-gradient(135deg, var(--accent-warning), #ffa000) !important;
+    color: white !important;
+    font-weight: 700;
+    animation: highlightPulse 2s infinite;
+}
+
+@keyframes highlightPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 187, 51, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(255, 187, 51, 0.8); }
+}
+
+.conflict {
+    background: linear-gradient(135deg, var(--accent-error), #cc0000) !important;
+    color: white !important;
+    animation: conflictShake 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes conflictShake {
+    0% { transform: translateX(-2px); }
+    100% { transform: translateX(2px); }
+}
+
+/* Enhanced Interactive Elements */
+.interactive-button {
+    animation: interactivePulse 2s ease-in-out infinite;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes interactivePulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(64, 224, 255, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(64, 224, 255, 0.6);
+    }
+}
+
+/* Enhanced Animations */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+    from { 
+        transform: translateY(-100px) scale(0.9);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 250px;
+    }
+    
+    .notes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .main-content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        z-index: 100;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.hidden {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .notes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .main-content {
+        padding: 16px;
+    }
+
+    .toolbar {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .toolbar .left, 
+    .toolbar .right {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .modal-content {
+        width: 98%;
+        margin: 1% auto;
+        padding: 20px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    td, th {
+        padding: 12px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .note-card {
+        min-height: 140px;
+        padding: 20px;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+    
+    .sidebar.hidden {
+        width: 100%;
+    }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+[role="button"] {
+    cursor: pointer;
+}
+
+[aria-hidden="true"] {
+    display: none !important;
+}
+
+/* Focus states for accessibility */
+button:focus,
+input:focus,
+select:focus,
+.folder-item:focus,
+.note-card:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --card-border: rgba(255, 255, 255, 0.3);
+        --glassmorphism-border: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--glassmorphism-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+}
+
+/* Loading states */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+.context-menu {
+  position: absolute;
+  display: none;
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+  min-width: 180px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.6);
+  z-index: 10000;
+}
+
+.context-menu div {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.context-menu div:hover {
+  background: #1e293b;
+}
+
+/* ANALYTICS */
+.analytics {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #020617, #020024);
+  padding: 20px;
+  z-index: 9999;
+  overflow: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.analytics-header button {
+  background: #ef4444;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.analytics-cards {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  min-width: 160px;
+}
+
+.analytics-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+canvas {
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 10px;
+}
+.analytics-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.chart-box {
+  height: 260px; /* 👈 CONTROL SIZE HERE */
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.chart-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+}.status-tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: inline-block;
+}
+.status-success {
+    background-color: #d4edda; /* Light Green */
+    color: #155724; /* Dark Green Text */
+    border: 1px solid #c3e6cb;
+}
+.status-computing {
+    background-color: #e2e3e5; /* Light Grey */
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}/* --- THE CENTER SCREEN POPUP --- */
+.alert {
+    position: fixed; /* Floats on top of the page */
+    top: 50%;        /* Center Vertically */
+    left: 50%;       /* Center Horizontally */
+    transform: translate(-50%, -50%); /* Perfect centering alignment */
+    
+    z-index: 9999;   /* Ensures it sits ON TOP of everything else */
+    min-width: 300px;
+    padding: 20px;
+    text-align: center;
+    
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Big shadow for depth */
+    
+    display: none; /* Hidden until you click the button */
+    animation: popIn 0.4s ease-out; /* The Pop Effect */
+}
+
+/* Success Green */
+.alert.success {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: white;
+    border: 2px solid #ffffff;
+}
+
+/* Error Red */
+.alert.error {
+    background: linear-gradient(135deg, #ff5f6d, #ffc371);
+    color: white;
+    border: 2px solid #ffffff;
+}
+
+/* Animation */
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+/* Container to center everything */
+.voice-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* The Button Styling */
+
+/* Hover Effect */
+#voice-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+}
+
+/* Active/Listening State (JavaScript will add this class) */
+#voice-btn.listening {
+    background: #2ed573; /* Green when listening */
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(46, 213, 115, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); }
+}
+
+#voice-status {
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #555;
+    font-weight: bold;
+}
+/* ✨ Custom Cool Prompt Modal */
+#custom-prompt-modal {
+    z-index: 11000 !important; /* Sit on top of everything */
+    background: rgba(0, 0, 0, 0.6); /* Dim background */
+    backdrop-filter: blur(4px); /* Blur effect */
+}
+
+#custom-prompt-modal .modal-content {
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid var(--accent-primary);
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+    box-shadow: 0 0 50px rgba(64, 224, 255, 0.15);
+    border-radius: 20px;
+}
+
+#prompt-message {
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #ffffff, #a0a9b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#prompt-input {
+    width: 100%;
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#prompt-input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(64, 224, 255, 0.2);
+}
+
+.prompt-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+#prompt-cancel-btn {
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff6b6b;
+    width: 100px;
+}
+
+#prompt-cancel-btn:hover {
+    background: rgba(255, 68, 68, 0.2);
+}
+
+#prompt-confirm-btn {
+    background: linear-gradient(135deg, var(--accent-primary), var(--button-secondary));
+    border: none;
+    color: white;
+    width: 100px;
+    box-shadow: 0 4px 15px rgba(64, 224, 255, 0.3);
+}
+
+#prompt-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(64, 224, 255, 0.5);
+}
+/* --- 💎 PRO DASHBOARD THEME --- */
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.modal-header h1 { margin: 0; font-size: 24px; color: white; letter-spacing: -0.5px; }
+.status-badge { background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3); text-transform: uppercase; }
+
+/* INPUTS */
+.dropdown-row {
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 15px;
+    margin-bottom: 30px; background: #1e293b; padding: 24px;
+    border-radius: 16px; border: 1px solid #334155;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+.input-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+select, input[type="date"] {
+    width: 100%; background: #0f172a; color: white;
+    border: 1px solid #334155; padding: 14px; border-radius: 8px;
+    font-size: 15px; outline: none; transition: 0.2s;
+}
+select:focus, input[type="date"]:focus { border-color: #3b82f6; }
+
+/* BUTTONS */
+.hero-actions { display: flex; gap: 15px; margin-bottom: 30px; height: 60px; }
+.ai-btn {
+    flex: 2; border: none; border-radius: 12px; color: white; cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+    font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+}
+.voice-btn, .qr-btn {
+    flex: 1; background: #334155; border: 1px solid #475569;
+    color: white; border-radius: 12px; cursor: pointer; font-weight: 600;
+}
+
+/* GOLD CARD (Result) */
+.gold-card {
+    background: #1e293b; border: 2px solid #0ea5e9; padding: 24px;
+    border-radius: 16px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.15); margin-bottom: 25px;
+}
+.gold-card h3 { margin: 0; font-size: 24px; color: white; }
+.gold-card p { margin: 5px 0 0 0; color: #bae6fd; font-size: 13px; }
+.check-icon {
+    width: 40px; height: 40px; background: rgba(14, 165, 233, 0.2);
+    border-radius: 50%; color: #bae6fd; display: flex; align-items: center; justify-content: center;
+}
+
+/* CLOSE BUTTON */
+.close { color: #94a3b8; font-size: 28px; font-weight: bold; cursor: pointer; }
+.close:hover { color: white; }
+/* --- 🛠️ ADVANCED TOOLS COMMAND DECK --- */
+.admin-panel {
+    background: #0f172a;
+    border-top: 1px solid #1e293b;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+.admin-panel.open {
+    max-height: 400px; /* Expands when opened */
+    padding: 20px;
+}
+
+.tool-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tool-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: #334155;
+    color: white;
+    border-color: #475569;
+    transform: translateY(-2px);
+}
+
+.tool-btn.danger:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
+.tool-btn.primary { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; }
+.tool-btn.primary:hover { background: rgba(59, 130, 246, 0.2); }
+
+/* Upload Zone */
+.upload-zone {
+    border: 2px dashed #334155;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(15, 23, 42, 0.5);
+    margin-top: 10px;
+}
+.upload-zone input { display: none; }
+.upload-label {
+    color: #94a3b8;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+}
+.upload-label:hover { color: #3b82f6; }
+/* --- 🛠️ ADVANCED TOOLS COMMAND DECK --- */
+.admin-panel {
+    background: #0f172a;
+    border-top: 1px solid #1e293b;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+.admin-panel.open {
+    max-height: 400px; /* Expands when opened */
+    padding: 20px;
+}
+
+.tool-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tool-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: #334155;
+    color: white;
+    border-color: #475569;
+    transform: translateY(-2px);
+}
+
+.tool-btn.danger:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
+.tool-btn.primary { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; }
+.tool-btn.primary:hover { background: rgba(59, 130, 246, 0.2); }
+
+/* Upload Zone */
+.upload-zone {
+    border: 2px dashed #334155;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(15, 23, 42, 0.5);
+    margin-top: 10px;
+}
+.upload-zone input { display: none; }
+.upload-label {
+    color: #94a3b8;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+}
+.upload-label:hover { color: #3b82f6; }
+/* --- 🛠️ ADVANCED TOOLS COMMAND DECK --- */
+.admin-panel {
+    background: #0f172a;
+    border-top: 1px solid #1e293b;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+.admin-panel.open {
+    max-height: 400px; /* Expands when opened */
+    padding: 20px;
+}
+
+.tool-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tool-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: #334155;
+    color: white;
+    border-color: #475569;
+    transform: translateY(-2px);
+}
+
+.tool-btn.danger:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
+.tool-btn.primary { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; }
+.tool-btn.primary:hover { background: rgba(59, 130, 246, 0.2); }
+
+/* Upload Zone */
+.upload-zone {
+    border: 2px dashed #334155;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(15, 23, 42, 0.5);
+    margin-top: 10px;
+}
+.upload-zone input { display: none; }
+.upload-label {
+    color: #94a3b8;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+}
+.upload-label:hover { color: #3b82f6; }
+/* --- 🎨 UI FIXES FOR RESULTS & TOOLS --- */
+
+/* 1. Fixed "Optimization Complete" Box */
+.gold-card {
+    background: linear-gradient(145deg, #0f172a, #1e293b);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+.result-header {
+    display: flex;
+    align-items: center; /* Vertically centers text and tick */
+    justify-content: space-between;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Perfect space between Text and Tick */
+}
+
+/* 2. NEW "Advanced Tools" Button Design */
+.divider {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* A sleek, dark, professional toggle button */
+.tools-toggle {
+    background: #0f172a; 
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 8px 24px;
+    border-radius: 20px; /* Pill shape */
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+}
+
+.tools-toggle:hover {
+    background: #1e293b;
+    color: #fff;
+    border-color: #64748b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* A subtle line behind the button */
+.divider::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: #1e293b;
+    z-index: 1;
+}
+
+/* 3. Panel Fix (Ensures it opens fully) */
+.admin-panel {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, padding 0.4s;
+    opacity: 0; /* Fade in effect */
+}
+[data-theme="dark"] .admin-panel { background: #0f172a; }
+
+.admin-panel.open {
+    max-height: 800px; /* Increased to fit everything */
+    padding: 20px;
+    opacity: 1;
+    border: 1px solid #334155;
+    margin-bottom: 20px;
+}
+
+
+/* ==========================================================================
+   🚀 NEXUS ENTERPRISE OVERRIDES (Add to bottom of CSS)
+   ========================================================================== */
+
+:root {
+    /* 1. REFINING THE PALETTE (Sharper Contrast) */
+    --bg-gradient: #020617; /* Removing the muddy gradient for deep void black */
+    
+    /* 2. GLASSMORPHISM TUNING (Cleaner Glass) */
+    --sidebar-bg: rgba(11, 17, 32, 0.85); /* Darker, less transparent */
+    --card-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.6));
+    --card-border: rgba(255, 255, 255, 0.08); /* Thinner, sharper border */
+    
+    /* 3. SHADOW ENGINE (Depth > Glow) */
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 0 10px rgba(64, 224, 255, 0.15);
+}
+
+/* 4. BACKGROUND CLEANUP */
+body {
+    background: #020617 !important; /* Force deep dark background */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(64, 224, 255, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%) !important;
+}
+
+/* 5. SIDEBAR: PROFESSIONAL ANCHORING */
+.sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 10px 0 40px rgba(0,0,0,0.5); /* Shadow falling onto content */
+}
+
+.folder-item {
+    border: 1px solid transparent; /* Prevents layout jump on hover */
+    color: #94a3b8; /* Muted text by default */
+}
+
+.folder-item:hover {
+    background: rgba(255,255,255,0.03);
+    color: #ffffff;
+    border-color: rgba(255,255,255,0.1);
+}
+
+.folder-item.active {
+    background: rgba(64, 224, 255, 0.08);
+    border: 1px solid rgba(64, 224, 255, 0.2);
+    color: #40e0ff;
+    box-shadow: none; /* Removing the glowy shadow for a cleaner look */
+}
+
+/* 6. NOTE CARDS: HIGH-FIDELITY SURFACE */
+.note-card {
+    /* Remove the flat background, add texture */
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.note-card:hover {
+    transform: translateY(-4px) scale(1.01); /* Subtle movement */
+    border-color: var(--accent-primary);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+}
+
+.note-title {
+    font-weight: 600;
+    letter-spacing: -0.02em; /* Tighter, more professional font */
+    color: #f8fafc;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Lifts text off the card */
+}
+
+.note-content {
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 7. NEW FOLDER BUTTON: TONE DOWN THE "GAMER" LOOK */
+.new-folder {
+    /* Change from gradient bomb to subtle professional button */
+    background: rgba(64, 224, 255, 0.1) !important;
+    border: 1px solid rgba(64, 224, 255, 0.3) !important;
+    color: #40e0ff !important;
+    box-shadow: none !important;
+}
+
+.new-folder:hover {
+    background: rgba(64, 224, 255, 0.2) !important;
+    box-shadow: 0 0 15px rgba(64, 224, 255, 0.2) !important;
+}
+
+/* 8. HEADER TYPOGRAPHY */
+.header span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b; /* Muted header */
+}
+
+/* 9. SCROLLBAR POLISH */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+/* ==========================================================================
+   🚀 NEXUS ENTERPRISE SKIN V6.0 (Append to bottom)
+   Focus: Depth, Luminosity, and Visual Density
+   ========================================================================== */
+
+:root {
+    /* 🌑 REFINED PROFESSIONAL PALETTE */
+    --nx-void: #020617;        /* Absolute base */
+    --nx-surface: #0b1120;     /* Layer 1 depth */
+    --nx-component: #1e293b;   /* Layer 2 interactive */
+    --nx-rim-light: rgba(255, 255, 255, 0.06);
+    
+    /* 💎 ACCENT TUNING */
+    --accent-primary: #40e0ff; /* Cyber Cyan */
+    --accent-indigo: #6366f1;  /* Indigo Logic */
+}
+
+/* 1. BACKGROUND VOID: Create a sense of infinite space */
+body {
+    background: var(--nx-void) !important;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(64, 224, 255, 0.04) 0px, transparent 50%) !important;
+}
+
+/* 2. SIDEBAR ANCHORING: Visually separate navigation from work */
+.sidebar {
+    background: var(--nx-surface) !important;
+    border-right: 1px solid var(--nx-rim-light) !important;
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6) !important; /* Shadow falls INTO the content */
+}
+
+.folder-item {
+    color: #94a3b8 !important;
+    border: 1px solid transparent;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.folder-item.active {
+    background: rgba(99, 102, 241, 0.08) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+    color: var(--accent-primary) !important;
+    box-shadow: none !important; /* Cleaner, modern look */
+}
+
+/* 3. THE KNOWLEDGE CARDS: High-Fidelity Data Surfaces */
+.note-card {
+    /* Subtle vertical gradient mimics physical light hitting the card from above */
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1px solid var(--nx-rim-light) !important;
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.4),
+        0 2px 4px -1px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 0 var(--nx-rim-light) !important; /* Top edge light */
+    border-radius: 12px !important;
+}
+
+.note-card:hover {
+    transform: translateY(-5px) !important; /* Subtle "lift" effect */
+    border-color: rgba(64, 224, 255, 0.3) !important;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(64, 224, 255, 0.1) !important;
+}
+
+.note-title {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important; /* Improves readability over gradients */
+}
+
+/* 4. THE COMMAND DECK (TOOLBAR) */
+.toolbar {
+    background: rgba(2, 6, 23, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid var(--nx-rim-light) !important;
+}
+
+.toolbar button {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+    border: 1px solid var(--nx-rim-light) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 0.05em !important;
+}
+
+.toolbar button:hover {
+    background: #334155 !important;
+    border-color: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+/* 5. ACTION BUTTONS: Sophisticated Logic Interaction */
+.new-folder, #new-file-btn, #ai-assign-btn {
+    /* Replaces the "soft" gradient with a "hard" premium indigo */
+    background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* 6. TYPOGRAPHY & DATA HIERARCHY */
+.header span {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+}
+
+.note-date {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 10px !important;
+    color: #475569 !important;
+}
+
+/* 7. SCROLLBAR SYSTEM */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+::-webkit-scrollbar-track { background: transparent; }/* --- COMPONENT: COMMAND GROUPING --- */
+.toolbar button {
+    padding: 0 12px !important;
+    background: rgba(30, 41, 59, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.toolbar button:hover {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+}/* ==========================================================================
+   💎 THE ENTERPRISE FINISH (V7.0)
+   Focus: Geometric Alignment & Functional Depth
+   ========================================================================== */
+
+/* 1. SIDEBAR: THE NAVIGATIONAL ANCHOR */
+.sidebar {
+    background: #080d1a !important; /* Slightly darker than main for focus */
+    padding: 30px 16px !important;
+}
+
+.folder-item {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.2px;
+    margin-bottom: 6px !important;
+    padding: 12px 14px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Fix Icon Alignment */
+.folder-item .icon {
+    font-size: 16px !important;
+    width: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+/* 2. THE CONTROL DECK (TOOLBAR) */
+.toolbar {
+    background: rgba(11, 17, 32, 0.9) !important;
+    padding: 0 40px !important; /* More breathing room */
+}
+
+/* Grouping Buttons into "Control Sets" */
+.toolbar .left {
+    gap: 8px !important;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toolbar button {
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 10px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+}
+
+.toolbar button:hover {
+    background: var(--nx-component) !important;
+    border-color: var(--nx-rim-light) !important;
+    color: #fff !important;
+}
+
+/* 3. CARD READABILITY: THE "GRID" FOCUS */
+.note-card {
+    padding: 30px !important; /* Standard enterprise padding */
+}
+
+.note-title {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px !important;
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.note-content {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    color: #94a3b8 !important; /* Slate 400 - Industry standard for dark text */
+}
+
+/* 4. SEMANTIC ALERTS (Psychological Feedback) */
+/* The Staff Alerts count should feel urgent */
+.folder-item:has(.count) .count {
+    background: #020617 !important;
+    border: 1px solid #ef4444 !important;
+    color: #ef4444 !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px !important;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 5. THE "NEW FOLDER" ACTION */
+.new-folder {
+    margin-top: 40px !important;
+    height: 48px !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px !important;
+}/* ==========================================================================
+   🛠️ COMMAND CENTER OVERHAUL (TOOLBAR)
+   Focus: Logical Grouping, Depth, and Tactile Feedback
+   ========================================================================== */
+
+/* 1. THE BAR CONTAINER: Deep Glassmorphism */
+.toolbar {
+    height: 64px !important; /* Standardized professional height */
+    background: rgba(11, 17, 32, 0.8) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 2. LOGO/BRANDING SECTION */
+.toolbar .left div:first-child {
+    font-weight: 800 !important;
+    font-size: 18px !important;
+    letter-spacing: -0.5px !important;
+    color: #ffffff !important;
+    margin-right: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 3. FUNCTIONAL GROUPING (The "Control Sets") */
+.toolbar .left, .toolbar .right {
+    gap: 8px !important;
+}
+
+/* Create visual "Pods" for groups of buttons */
+.toolbar .left {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 4. INDIVIDUAL BUTTON REFINEMENT */
+.toolbar button {
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 12px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    color: #94a3b8 !important; /* Slate 400 */
+    font-size: 14px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Tactile Hover States */
+.toolbar button:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Primary Action Glow (New Note Button) */
+#new-file-btn {
+    background: rgba(99, 102, 241, 0.15) !important;
+    color: #818cf8 !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+#new-file-btn:hover {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* 5. SEARCH ENGINE UI */
+#search-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    height: 34px !important;
+    padding: 0 16px !important;
+    border-radius: 10px !important;
+    width: 240px !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    transition: width 0.3s ease, border-color 0.3s ease !important;
+}
+
+#search-input:focus {
+    width: 320px !important;
+    border-color: #6366f1 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* 6. ICON ALIGNMENT */
+.toolbar button .icon, 
+.toolbar button span {
+    font-size: 16px !important;
+    line-height: 1 !important;
+}/* ==========================================================================
+   🛠️ UNIFIED COMMAND CENTER (BAR FIX)
+   Removes the "Bad Separation" and creates a single cohesive anchor
+   ========================================================================== */
+
+.toolbar {
+    /* Heal the gap: Make it a single solid horizontal anchor */
+    display: flex !important;
+    width: 100% !important;
+    height: 60px !important;
+    background: rgba(15, 23, 42, 0.8) !important; /* Unified dark glass */
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0 24px !important;
+    justify-content: space-between !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+}
+
+/* Unify the inner groups so they don't look like separate "floating" pieces */
+.toolbar .left, 
+.toolbar .right {
+    display: flex !important;
+    align-items: center !important;
+    background: transparent !important; /* Remove individual backgrounds */
+    border: none !important;            /* Remove individual borders */
+    padding: 0 !important;
+    gap: 12px !important;
+}
+
+/* Re-group buttons with subtle logical separators instead of gaps */
+.toolbar .left button {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: #94a3b8 !important;
+    height: 34px !important;
+    min-width: 38px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.toolbar button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Ensure the search bar feels part of the same physical unit */
+#search-input {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    color: white !important;
+    margin-left: 12px !important;
+}
+
+/* Special styling for the 'Primary' button in the row */
+#new-file-btn {
+    background: rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #818cf8 !important;
+}
+
+#new-file-btn:hover {
+    background: #6366f1 !important;
+    color: white !important;
+}/* ==========================================================================
+   🏁 THE FINAL POLISH: TOOLBAR SUBSTRATE UNITY
+   Focus: Zero-Gap Logic, Mechanical Depth, and Perfect Verticality
+   ========================================================================== */
+
+/* 1. TIGHTEN THE COMMAND POD */
+.toolbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important; /* Eliminate gaps for a 'single unit' feel */
+    background: rgba(0, 0, 0, 0.4) !important; /* Deep contrast pocket */
+    padding: 2px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important; /* Inset shadow for depth */
+}
+
+/* 2. MECHANICAL BUTTONS */
+.toolbar button {
+    height: 36px !important;
+    width: 40px !important;
+    border-radius: 6px !important;
+    margin: 0 1px !important;
+    border: 1px solid transparent !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Hover: The 'Glass Slide' effect */
+.toolbar button:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transform: none !important; /* Professional tools don't jump on hover */
+}
+
+/* Active State: The 'Engaged' look */
+.toolbar button:active {
+    background: rgba(0, 0, 0, 0.5) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* 3. LOGO REFINEMENT */
+/* If the logo is inside .left, let's give it a distinctive border */
+.toolbar .left div:first-child {
+    padding: 0 16px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 4. SEARCH BAR 'INTEGRATION' */
+#search-input {
+    background: rgba(0, 0, 0, 0.5) !important; /* Match the Pod depth */
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#search-input:focus {
+    background: #000000 !important;
+    border-color: #40e0ff !important;
+    box-shadow: 0 0 10px rgba(64, 224, 255, 0.2) !important;
+}
+
+/* 5. SIDEBAR HEADER SYNC */
+.header span {
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    font-size: 10px !important;
+    letter-spacing: 1.5px !important;
+    opacity: 0.5; /* Makes the workspace feel more vast */
+}/* ==========================================================================
+   🍎 UNIFIED APPLE NOTES TOOLBAR (NO SEPARATION)
+   ========================================================================== */
+
+.toolbar {
+    height: 52px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 16px !important;
+    
+    /* The Apple Blur effect */
+    background: rgba(28, 28, 30, 0.75) !important;
+    backdrop-filter: blur(30px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+}
+
+/* The Spacer allows the left and right items to push apart naturally */
+.toolbar-spacer {
+    flex: 1 !important;
+}
+
+/* 🔘 ICON BUTTONS: Clean, Ghost Style */
+#menu-btn, #new-file-btn {
+    width: 36px !important;
+    height: 36px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #40e0ff !important; /* Your accent color */
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+    margin-right: 8px !important;
+}
+
+#menu-btn:hover, #new-file-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 🔍 SEARCH AREA: Integrated into the right side */
+.search-container {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    margin-left: 8px !important;
+}
+
+.search-icon {
+    position: absolute !important;
+    left: 10px !important;
+    font-size: 12px !important;
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+}
+
+#search-input {
+    width: 180px !important; /* Smaller, native Apple width */
+    height: 28px !important;
+    background: rgba(118, 118, 128, 0.24) !important; /* Precise iOS search color */
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0 10px 0 28px !important;
+    color: white !important;
+    font-size: 14px !important;
+    transition: width 0.3s ease !important;
+}
+
+#search-input:focus {
+    width: 250px !important; /* Expands on focus like Apple Notes */
+    background: rgba(118, 118, 128, 0.4) !important;
+    outline: none !important;
+}
+
+/* 🧹 CLEANUP: Hide all previous legacy containers */
+.toolbar-left, .toolbar-center, .toolbar-right, 
+.toolbar .left, .toolbar .right, 
+#openAnalyticsBtn, #back-btn, #forward-btn, #copy-btn, 
+#audio-btn, #view-toggle-btn, #fullscreen-btn, #settings-btn {
+    display: none !important;
+}/* ==========================================================================
+   👻 GHOST SURFACE (REMOVE SEPARATION)
+   Merges the Toolbar and Body into one continuous glass sheet
+   ========================================================================== */
+
+/* 1. DISSOLVE THE BARRIER */
+.toolbar {
+    /* Remove the hard line */
+    border-bottom: none !important;
+    box-shadow: none !important;
+    
+    /* Make background invisible but keep the blur for scrolling */
+    background: rgba(2, 6, 23, 0.6) !important; /* Extremely subtle dark tint */
+    backdrop-filter: blur(20px) !important;     /* Heavy blur for text sliding under */
+    
+    /* Ensure it floats seamlessly */
+    z-index: 1000 !important;
+}
+
+/* 2. MATCH THE SIDEBAR (Optional Visual Trick) */
+/* This makes the sidebar look like it goes all the way to the top corner */
+
+/* 3. REFINE SEARCH INPUT TO "FLOAT" */
+#search-input {
+    /* Remove the heavy background so it blends */
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: none !important;
+}
+
+#search-input:focus {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-color: #40e0ff !important;
+}
+
+/* 4. ENSURE BODY FILL IS CONSISTENT */
+.main-content {
+    /* Ensure the content pushes up behind the toolbar */
+    padding-top: 0 !important; 
+    margin-top: 0 !important;
+}/* ==========================================================================
+   🍏 NATIVE MACOS ARCHITECTURE (FINAL LAYOUT)
+   Sidebar: Full Height (Left) | Toolbar: Transparent (Right)
+   ========================================================================== */
+
+/* 1. SIDEBAR: FULL HEIGHT PILLAR */
+.sidebar {
+    position: fixed !important; /* Stick to the screen */
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important; /* Go all the way down */
+    width: 280px !important;
+    z-index: 5000 !important; /* Sit above everything */
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: #0b1120 !important; /* Dedicated sidebar color */
+    padding-top: 60px !important; /* Push folders down to make room for Menu button */
+}
+
+/* 2. MOVE MENU BUTTON *INTO* SIDEBAR */
+#menu-btn {
+    position: fixed !important;
+    top: 14px !important;
+    left: 18px !important;
+    z-index: 5001 !important; /* Above the sidebar background */
+    color: #40e0ff !important;
+    background: transparent !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* 3. TOOLBAR: INVISIBLE & BLENDED */
+.toolbar {
+    position: sticky !important;
+    top: 0 !important;
+    margin-left: 280px !important; /* Start AFTER the sidebar */
+    width: calc(100% - 280px) !important; /* Take remaining space */
+    background: transparent !important; /* 🌟 THE KEY TO BLENDING */
+    backdrop-filter: blur(20px) !important; /* Keep blur for scrolling content */
+    border-bottom: none !important;
+    box-shadow: none !important;
+    justify-content: flex-end !important; /* Push search/new to the right */
+    padding-right: 30px !important;
+    height: 60px !important;
+}
+
+/* 4. MAIN CONTENT: ALIGNED */
+.main-content {
+    margin-left: 280px !important; /* Align with toolbar */
+    width: calc(100% - 280px) !important;
+    padding-top: 0 !important;
+}
+
+/* 5. SEARCH BAR: FIXED ICON & ALIGNMENT */
+.search-container {
+    margin-right: 12px !important;
+    background: rgba(255, 255, 255, 0.05) !important; /* Subtle box */
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.search-icon {
+    position: absolute !important;
+    left: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important; /* 🎯 VERTICAL CENTER FIX */
+    font-size: 14px !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+}
+
+#search-input {
+    background: transparent !important;
+    border: none !important;
+    padding-left: 34px !important; /* Room for icon */
+    height: 32px !important;
+    width: 200px !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+#search-input:focus {
+    width: 260px !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 6. HANDLE "HIDDEN SIDEBAR" STATE */
+/* If you toggle the sidebar closed, expand the rest */
+.sidebar.hidden {
+    transform: translateX(-100%) !important;
+}
+
+/* Use :has selector to detect if sidebar is hidden (Modern Browsers) */
+body:has(.sidebar.hidden) .toolbar,
+body:has(.sidebar.hidden) .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+}/* ==========================================================================
+   🍏 APPLE NOTES SIDEBAR HEADER (CSS MAGIC)
+   Moves buttons to create a faux-header at the top of the sidebar
+   ========================================================================== */
+
+/* 1. PREPARE THE SIDEBAR CONTAINER */
+.sidebar {
+    /* Ensure padding for the new top icons */
+    padding-top: 60px !important;
+    /* Ensure absolute children are relative to this box */
+    position: fixed !important; 
+    /* Ensure background is solid so icons don't float on transparent space */
+    background: #0b1120 !important; 
+}
+
+/* 2. POSITION THE MENU BTN (Top-Left) */
+#menu-btn {
+    position: absolute !important;
+    top: 18px !important;
+    left: 18px !important;
+    z-index: 10 !important;
+    color: #40e0ff !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 20px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+}
+
+/* 3. TRANSFORM THE HUGE "NEW FOLDER" BUTTON (Top-Right) */
+.new-folder {
+    /* Move it from the bottom to the top-right corner */
+    position: absolute !important;
+    top: 18px !important;
+    right: 18px !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+
+    /* Shrink it from a big button to a small icon */
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #40e0ff !important; /* Accent color */
+    
+    /* Flex settings to center the icon */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Hide the text "New Folder", show only the icon */
+.new-folder {
+    font-size: 0 !important; /* Hides text */
+}
+
+.new-folder .icon {
+    font-size: 18px !important; /* Shows icon */
+    margin: 0 !important;
+}
+
+/* Hover states for both icons */
+#menu-btn:hover, .new-folder:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+}
+
+/* 4. ADJUST FOLDER LIST SPACING */
+.folder-list {
+    /* Ensure list doesn't overlap the new header area */
+    margin-top: 10px !important; 
+}/* ==========================================================================
+   🏗️ Z-INDEX ARCHITECTURE (LAYER FIX)
+   Ensures Toolbar stays ON TOP of scrolling notes and Modals
+   ========================================================================== */
+
+/* 1. FORCE TOOLBAR TO THE FRONT */
+.toolbar {
+    position: fixed !important; /* Lock it to the glass, stop scrolling with page */
+    top: 0 !important;
+    right: 0 !important;
+    /* Sidebar is 280px, so Toolbar starts there */
+    left: 280px !important; 
+    width: auto !important; /* Fill the rest */
+    
+    /* STRATOSPHERE LAYER: Above cards (10) but below Modal (10000) */
+    z-index: 4000 !important; 
+    
+    /* Re-apply the glass since fixed needs it */
+    background: rgba(11, 17, 32, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 2. PUSH MAIN CONTENT DOWN (So it doesn't hide behind the fixed bar) */
+.main-content {
+    margin-top: 60px !important; /* Push down by height of toolbar */
+    padding-top: 20px !important; /* Add breathing room */
+    position: relative !important;
+    z-index: 1 !important; /* Base layer */
+}
+
+/* 3. MODAL LAYER CORRECTION */
+/* If you want the modal to cover the toolbar, keep this high. 
+   If you want the toolbar VISIBLE over the modal, lower this. 
+   Standard UI: Modal covers everything. */
+.modal {
+    z-index: 10000 !important; /* Highest layer */
+}
+
+/* 4. FIX SIDEBAR SHADOW BLEED */
+.sidebar {
+    z-index: 5000 !important; /* Sidebar is higher than toolbar */
+}
+
+/* 5. PREVENT CARD "JUMPING" OVER TOOLBAR */
+.note-card {
+    /* Remove huge z-index on hover that might glitch through the bar */
+    z-index: 1 !important; 
+    transform: none !important; /* Simplify hover to avoid 3D stacking issues */
+}
+
+.note-card:hover {
+    z-index: 2 !important; /* Slight lift only */
+    transform: translateY(-4px) !important;
+}/* ==========================================================================
+   🏗️ Z-INDEX ARCHITECTURE (LAYER FIX)
+   Ensures Toolbar stays ON TOP of scrolling notes
+   ========================================================================== */
+
+/* 1. FORCE TOOLBAR TO THE FRONT */
+.toolbar {
+    position: fixed !important; /* Lock it to the glass, stop scrolling with page */
+    top: 0 !important;
+    right: 0 !important;
+    /* Sidebar is 280px, so Toolbar starts after it */
+    left: 280px !important; 
+    width: auto !important; /* Fill the rest of the screen */
+    
+    /* STRATOSPHERE LAYER: Above cards (10) but below Modal (10000) */
+    z-index: 4000 !important; 
+    
+    /* Re-apply the glass since fixed position needs a background to hide scrolling items */
+    background: rgba(11, 17, 32, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 2. PUSH MAIN CONTENT DOWN */
+/* Since toolbar is fixed, we must push content down so it doesn't start hidden behind the bar */
+.main-content {
+    margin-top: 60px !important; 
+    padding-top: 20px !important; 
+    position: relative !important;
+    z-index: 1 !important; /* Base layer */
+}
+
+/* 3. SIDEBAR LAYER (Must be highest) */
+.sidebar {
+    z-index: 5000 !important; 
+}
+
+/* 4. MODAL LAYER (Popup must cover everything) */
+.modal {
+    z-index: 10000 !important; 
+}
+
+/* 5. PREVENT CARD "JUMPING" OVER TOOLBAR */
+.note-card {
+    /* Ensure cards never accidentally get a higher z-index than the toolbar */
+    z-index: 1 !important; 
+    transform: none !important; /* Simplify hover to avoid 3D stacking issues */
+}
+
+.note-card:hover {
+    z-index: 2 !important; /* Slight lift only */
+    transform: translateY(-4px) !important;
+}/* ==========================================================================
+   🌑 VOID FUSION (REMOVE ALL SEAMS)
+   Fixes the 'line' and color shifts in the top-left corner
+   ========================================================================== */
+
+/* 1. THE GLOBAL CANVAS */
+body {
+    /* One unified background for everything */
+    background: #020617 !important; 
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 2. DISSOLVE THE SIDEBAR WALLS */
+.sidebar {
+    /* Kill the solid background and the border-right line */
+    background: transparent !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    
+    /* Optional: Use a very subtle glass tint to separate content without a line */
+    background: rgba(255, 255, 255, 0.01) !important;
+}
+
+/* 3. DISSOLVE THE TOOLBAR WALLS */
+.toolbar {
+    /* Remove any background or border-bottom that creates the 'cut' */
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    
+    /* Ensure the toolbar doesn't have a background-color that differs from body */
+    backdrop-filter: none !important; 
+}
+
+/* 4. CLEAR THE HEADER ANCHOR */
+/* This removes any 'background-color' assigned to the top-left corner specifically */
+.sidebar-header, .header, .toolbar-left {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* 5. THE VERTICAL LINE FIX (Specific targeting) */
+/* Sometimes a 'right-border' on a specific inner div causes that vertical line */
+div[class*="container"], div[class*="wrapper"] {
+    border-right: none !important;
+    border-left: none !important;
+}
+
+/* 6. SYNC SEARCH BAR DEPTH */
+#search-input {
+    /* Make the search bar look like it's cut into the unified background */
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}/* ==========================================================================
+
+/* 3. FIX THE COLOR MISMATCH (BLEND LOGO & SIDEBAR) */
+/* ==========================================================================
+   🎯 SEARCH BAR FIX (ICON ANCHOR ONLY)
+   ========================================================================== */
+
+/* 1. DEFINE THE CONTAINER */
+.search-container {
+    position: relative !important; /* This is the anchor point */
+    display: flex !important;
+    align-items: center !important; /* Vertically aligns children */
+    width: 240px !important;
+    height: 36px !important;
+}
+
+/* 2. POSITION THE ICON (ABSOLUTE LOCK) */
+.search-icon {
+    position: absolute !important; 
+    left: 10px !important;         /* 10px from the left edge */
+    top: 50% !important;           /* Push down 50% */
+    transform: translateY(-50%) !important; /* Pull back up 50% for perfect center */
+    z-index: 10 !important;        /* Ensure it sits on top of the input */
+    
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    pointer-events: none !important; /* Clicks pass through to the input */
+    line-height: 1 !important;     /* Prevents font height glitches */
+}
+
+/* 3. STYLE THE INPUT (MAKE ROOM FOR ICON) */
+#search-input {
+    width: 100% !important;
+    height: 100% !important;       /* Fill the container height */
+    padding-left: 36px !important; /* Add space on left so text doesn't hit icon */
+    padding-right: 10px !important;
+    
+    background-color: rgba(118, 118, 128, 0.24) !important; /* Apple Grey */
+    border: none !important;
+    border-radius: 10px !important;
+    color: white !important;
+    font-size: 13px !important;
+    margin: 0 !important;          /* Remove any default browser margins */
+}/* ==========================================================================
+   ⚙️ SETTINGS PANEL 2.0 (Mac Layout)
+   ========================================================================== */
+
+.settings-container {
+    display: flex;
+    width: 800px;
+    height: 500px;
+    background: #0f172a; /* Deep Blue Surface */
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- LEFT SIDEBAR --- */
+.settings-sidebar {
+    width: 220px;
+    background: #0b1120; /* Darker Sidebar */
+    border-right: 1px solid #1e293b;
+    padding: 20px;
+}
+
+.settings-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+    padding-left: 10px;
+}
+
+.settings-nav li {
+    list-style: none;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-nav li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.settings-nav li.active {
+    background: #40e0ff; /* Active Cyan */
+    color: #000;
+    font-weight: 600;
+}
+
+/* --- RIGHT CONTENT --- */
+.settings-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.settings-tab {
+    display: none; /* Hidden by default */
+    animation: fadeIn 0.3s ease;
+}
+
+.settings-tab.active {
+    display: block; /* Show active */
+}
+
+.settings-content h2 {
+    font-size: 20px;
+    color: white;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 10px;
+}
+
+/* --- FORMS & INPUTS --- */
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.settings-content input, 
+.settings-content select, 
+.settings-content textarea {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+}
+
+.settings-content input:focus, 
+.settings-content textarea:focus {
+    border-color: #40e0ff;
+    outline: none;
+}
+
+/* --- BUTTONS --- */
+.save-btn {
+    background: #40e0ff;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.danger-zone {
+    border: 1px solid #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.danger-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.close-settings {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.close-settings:hover { color: white; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}/* ==========================================================================
+   ⚙️ SETTINGS BUTTON POSITIONING
+   ========================================================================== */
+
+#settings-btn {
+    position: absolute !important;
+    bottom: 20px !important;
+    left: 20px !important;
+    width: 40px !important;
+    height: 40px !important;
+    
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important; /* Circle shape */
+    
+    color: #94a3b8 !important; /* Muted grey */
+    font-size: 20px !important;
+    cursor: pointer !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    z-index: 5002 !important; /* Above sidebar background */
+}
+
+/* Hover Effect (Spin & Glow) */
+#settings-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: #40e0ff !important;
+    transform: rotate(90deg) !important; /* Cool spin effect */
+    box-shadow: 0 0 15px rgba(64, 224, 255, 0.3) !important;
+}/* ==========================================================================
+   ⚙️ SETTINGS 2.0 STYLES (UI COMPONENTS)
+   ========================================================================== */
+
+/* --- TOGGLES (iOS Style) --- */
+.setting-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-toggle input[type="checkbox"] {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: #334155;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none; /* Override defaults */
+}
+
+.setting-toggle input[type="checkbox"]:checked {
+    background: #40e0ff;
+}
+
+.setting-toggle input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.setting-toggle input[type="checkbox"]:checked::after {
+    transform: translateX(20px);
+}
+
+.subtext {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* --- RADIO CARDS (Preview Selection) --- */
+.radio-cards {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.radio-card {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.radio-card.selected {
+    border-color: #40e0ff;
+    background: rgba(64, 224, 255, 0.1);
+}
+
+.radio-card .fake-img {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+/* --- COLOR PICKER --- */
+.color-picker {
+    display: flex;
+    gap: 10px;
+}
+
+.color-dot {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.color-dot.active {
+    border-color: white;
+    transform: scale(1.1);
+}
+
+/* --- LAYOUT UTILS --- */
+.setting-row {
+    display: flex;
+    gap: 15px;
+}
+.half { width: 50%; }
+.divider { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
+
+.action-btn {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.btn-row { display: flex; gap: 10px; margin-bottom: 15px; }
+
+.info-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #475569;
+    font-size: 11px;
+}/* ==========================================================================
+   💎 COMPLEX PREVIEW ENGINE (HIGH FIDELITY)
+   ========================================================================== */
+
+/* 1. The Preview Container (The Glass Window) */
+.card-preview-box {
+    width: 100% !important;
+    height: 160px !important;
+    background: #0f1115 !important; /* Deep void background */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px 12px 0 0 !important; /* Rounded top only */
+    overflow: hidden !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* 2. The Scaler (The Layout Engine) */
+.mini-content {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    /* We render at 350% size for high resolution, then shrink */
+    width: 350% !important;
+    height: auto !important;
+    transform: scale(0.285) !important; 
+    transform-origin: top left !important;
+    padding: 30px !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important; /* Disable interaction */
+    
+    /* Force default text styles so it doesn't look broken */
+    color: #e2e8f0 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+/* 3. TABLE RENDERER (The Critical Part) */
+/* This forces any table inside the preview to look like a pro document */
+.mini-content table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: #1e293b !important; /* Card background */
+    border: 4px solid #475569 !important; /* Thick visible border */
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+}
+
+.mini-content th {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%) !important;
+    color: #40e0ff !important; /* Cyan headers */
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    padding: 15px !important;
+    border-bottom: 3px solid #475569 !important;
+    border-right: 2px solid #334155 !important;
+    font-size: 14px !important;
+}
+
+.mini-content td {
+    background: transparent !important;
+    color: #cbd5e1 !important; /* Light text */
+    padding: 12px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 2px solid #334155 !important;
+    font-size: 14px !important;
+}
+
+/* 4. Highlight 'Free' vs 'Busy' automatically in preview */
+.mini-content td:empty::after { content: "-"; color: #555; }/* ==========================================================================
+   💎 INDUSTRIAL PREVIEW ENGINE (HIGH FIDELITY)
+   ========================================================================== */
+
+/* 1. The Glass Window Container */
+.card-preview-box {
+    width: 100% !important;
+    height: 160px !important;
+    background: #0f1115 !important; /* Void Black */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    z-index: 1 !important;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8) !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.note-card:hover .card-preview-box {
+    border-color: #40e0ff !important; /* Cyan active state */
+}
+
+/* 2. The Scaling Engine (The "Shrink Ray") */
+.mini-content {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    
+    /* Render at 3.5x size for crisp text, then shrink */
+    width: 350% !important;
+    height: auto !important;
+    transform: scale(0.285) !important; 
+    transform-origin: top left !important;
+    
+    padding: 30px !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important; /* Passive layer */
+    
+    /* Default Typography for non-table text */
+    color: #94a3b8 !important;
+    font-family: 'JetBrains Mono', 'Inter', monospace !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    white-space: pre-wrap !important; /* Preserve formatting */
+}
+
+/* 3. TABLE ENFORCEMENT (The "Nuclear" Styles) */
+/* This overrides ANY style the original table might have had */
+.mini-content table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: #1e293b !important; /* Solid Slate Background */
+    border: 4px solid #475569 !important; /* Thick Borders */
+    border-radius: 8px !important;
+    margin-bottom: 0 !important;
+    table-layout: fixed !important; /* Force equal widths */
+}
+
+/* Header Cells */
+.mini-content th {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%) !important;
+    color: #40e0ff !important; /* Cyan Text */
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    padding: 12px !important;
+    border-bottom: 3px solid #475569 !important;
+    border-right: 2px solid #334155 !important;
+    font-size: 16px !important;
+    text-align: center !important;
+}
+
+/* Data Cells */
+.mini-content td {
+    background: transparent !important;
+    color: #e2e8f0 !important; /* Bright White Text */
+    padding: 12px !important;
+    border-bottom: 2px solid #334155 !important;
+    border-right: 2px solid #334155 !important;
+    font-size: 16px !important;
+    text-align: center !important;
+    height: 40px !important; /* Force height */
+}
+
+/* Empty Cell Handling */
+.mini-content td:empty::before {
+    content: '-';
+    color: #475569;
+}/* ==========================================================================
+   📸 PREVIEW CARD STYLES (Make the table visible!)
+   ========================================================================== */
+
+/* 1. The "Window" */
+.card-preview-box {
+    width: 100%;
+    height: 150px;                 /* Fixed height is CRITICAL */
+    background: #020617;           /* Very dark blue background */
+    border-bottom: 1px solid #334155;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;              /* Cut off the rest of the table */
+    position: relative;
+}
+
+/* 2. The "Shrink Ray" (Scales the table down) */
+.mini-content {
+    position: absolute;
+    top: 0; left: 0;
+    width: 300%;                   /* Render 3x wider */
+    transform: scale(0.33);        /* Shrink to 33% */
+    transform-origin: top left;
+    pointer-events: none;          /* Prevent clicking inside */
+}
+
+/* 3. High-Contrast Table Styles (Force visibility) */
+.mini-content table {
+    width: 100% !important;
+    background: #1e293b !important; /* Slate background */
+    border: 2px solid #475569 !important;
+    border-collapse: collapse !important;
+}
+
+.mini-content th {
+    background: #2563eb !important; /* Bright Blue Header */
+    color: white !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    border: 1px solid #475569 !important;
+}
+
+.mini-content td {
+    background: #0f172a !important; /* Dark Data Cells */
+    color: #e2e8f0 !important;      /* White Text */
+    padding: 10px !important;
+    font-size: 14px !important;
+    border: 1px solid #334155 !important;
+}
+
+/* ==========================================
+   📸 PREVIEW FIX (High Contrast)
+   ========================================== */
+
+/* 1. The Container */
+.card-preview-box {
+    width: 100%;
+    height: 150px;
+    background: #020617;       /* Very Dark Blue */
+    border-bottom: 1px solid #334155;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 2. The Scaler */
+.mini-content {
+    position: absolute;
+    top: 0; left: 0;
+    width: 320%;               /* Render wide */
+    transform: scale(0.31);    /* Shrink down */
+    transform-origin: top left;
+    pointer-events: none;
+}
+
+/* 3. FORCE TABLE VISIBILITY */
+/* This makes the table blue & white so you can see it */
+.mini-content table {
+    width: 100% !important;
+    background: #1e293b !important;
+    border: 4px solid #475569 !important;
+    border-collapse: separate !important;
+}
+
+.mini-content th {
+    background: #3b82f6 !important; /* Bright Blue Header */
+    color: white !important;
+    padding: 15px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+
+.mini-content td {
+    background: #0f172a !important; /* Dark Cell */
+    color: #e2e8f0 !important;      /* White Text */
+    border: 2px solid #334155 !important;
+    padding: 10px !important;
+}/* ==========================================================================
+   🍎 APPLE NOTES STYLE PREVIEW ENGINE
+   ========================================================================== */
+
+/* 1. The Card Window */
+.card-preview-box {
+    width: 100%;
+    height: 180px;                /* Fixed height for the preview area */
+    background: #0f172a;          /* Dark background matching your theme */
+    overflow: hidden;             /* Cut off content that is too long */
+    position: relative;
+    border-bottom: 1px solid #334155;
+    border-radius: 12px 12px 0 0;
+    pointer-events: none;         /* Prevent clicking inside the thumbnail */
+}
+
+/* 2. The "Shrink Ray" (Scales the actual content down) */
+.mini-content {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 320%;                  /* Render the table 3.2x wider */
+    transform: scale(0.3125);     /* Shrink it back down to fit (100% / 3.2) */
+    transform-origin: top left;   /* Scale from the top-left corner */
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* 3. High-Fidelity Table Rendering for the Preview */
+.mini-content table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: #1e293b !important;
+    border: 3px solid #475569 !important;
+    border-radius: 8px;
+}
+
+.mini-content th {
+    background: #2563eb !important; /* Bright Blue Headers */
+    color: white !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    padding: 12px !important;
+    font-size: 16px !important;     /* Large font so it's readable when shrunk */
+    border: 1px solid #475569 !important;
+}
+
+.mini-content td {
+    background: #020617 !important; /* Dark cells */
+    color: #e2e8f0 !important;      /* White text */
+    border: 1px solid #334155 !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    text-align: center;
+}
+
+/* 4. Highlight Modified Cells in Preview */
+.mini-content td[style*="color: rgb(56, 189, 248)"] {
+    background: rgba(56, 189, 248, 0.15) !important;
+    border: 2px solid #38bdf8 !important;
+}
