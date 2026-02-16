@@ -570,7 +570,8 @@ function openSubstitutionForm(note) {
     // --- STATE HISTORY (For Undo) ---
     let historyStack = [];
     const saveState = () => {
-        const tbody = document.querySelector('#teacher-schedule tbody');
+        // ✅ FIX 1: Look inside the container, not the whole document
+        const tbody = substitutionFormContainer.querySelector('#teacher-schedule tbody');
         if (tbody) {
             historyStack.push(tbody.innerHTML);
             if (historyStack.length > 50) historyStack.shift();
@@ -653,35 +654,38 @@ function openSubstitutionForm(note) {
     setTimeout(() => {
         document.getElementById('pro-close-btn').onclick = () => substitutionModal.style.display = 'none';
 
-        // A. INITIAL DATA POPULATION (REALISTIC DATA FOR TESTING)
-        // This solves your issue of "all periods free so checking is difficult"
-        const tbody = document.querySelector('#teacher-schedule tbody');
-        const realisticSubjects = ['9-A (Math)', '10-B (Sci)', '11-A (Eng)', '12-A (Hist)', 'Library', 'Games'];
+        // ✅ FIX 2: Find the table specifically inside the container
+        const tbody = substitutionFormContainer.querySelector('#teacher-schedule tbody');
+        
+        // A. INITIAL DATA POPULATION
+        if (currentNote.scheduleData && currentNote.scheduleData.includes('<tr')) {
+            tbody.innerHTML = currentNote.scheduleData;
+        } else {
+            const realisticSubjects = ['9-A (Math)', '10-B (Sci)', '11-A (Eng)', '12-A (Hist)', 'Library', 'Games'];
 
-        for (let i = 1; i <= 35; i++) {
-            const tr = document.createElement('tr');
-            const tName = `Teacher ${i}`;
-            let html = `<td style="padding:12px; border-bottom:1px solid #1e293b; color:white; font-weight:600;">${tName}</td>`;
-            
-            for (let p = 1; p <= 9; p++) {
-                // 50% chance of having a class (Busy)
-                const isBusy = Math.random() > 0.5;
-                let content = "Free";
-                let color = "#475569"; // Free color
+            for (let i = 1; i <= 35; i++) {
+                const tr = document.createElement('tr');
+                const tName = `Teacher ${i}`;
+                let html = `<td style="padding:12px; border-bottom:1px solid #1e293b; color:white; font-weight:600;">${tName}</td>`;
+                
+                for (let p = 1; p <= 9; p++) {
+                    const isBusy = Math.random() > 0.5;
+                    let content = "Free";
+                    let color = "#475569"; 
 
-                if (isBusy) {
-                    content = realisticSubjects[Math.floor(Math.random() * realisticSubjects.length)];
-                    color = "#cbd5e1"; // Busy color
-                    if (content === 'Library' || content === 'Games') color = '#a5b4fc';
+                    if (isBusy) {
+                        content = realisticSubjects[Math.floor(Math.random() * realisticSubjects.length)];
+                        color = "#cbd5e1"; 
+                        if (content === 'Library' || content === 'Games') color = '#a5b4fc';
+                    }
+
+                    html += `<td id="${tName}-p${p}" class="schedule-cell" style="padding:12px; border-bottom:1px solid #1e293b; color:${color};">${content}</td>`;
                 }
-
-                html += `<td id="${tName}-p${p}" class="schedule-cell" style="padding:12px; border-bottom:1px solid #1e293b; color:${color};">${content}</td>`;
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
             }
-            tr.innerHTML = html;
-            tbody.appendChild(tr);
         }
         
-        // Save initial state for "Reset"
         let initialHTML = tbody.innerHTML;
 
         // B. AUTO-ASSIGN LOGIC (SEND TO PYTHON)
@@ -693,9 +697,9 @@ function openSubstitutionForm(note) {
             saveState(); // Save for Undo
             btn.innerHTML = '⚡ Processing Logic...';
 
-            // Scrape table
+            // Scrape table (Scoped to container)
             let scheduleSnapshot = {};
-            document.querySelectorAll('#teacher-schedule tbody tr').forEach(tr => {
+            substitutionFormContainer.querySelectorAll('#teacher-schedule tbody tr').forEach(tr => {
                 let name = tr.cells[0].textContent;
                 let periods = Array.from(tr.cells).slice(1).map(td => td.textContent);
                 scheduleSnapshot[name] = periods;
@@ -713,7 +717,11 @@ function openSubstitutionForm(note) {
                 
                 if (data.assignments && data.assignments.length > 0) {
                     data.assignments.forEach(task => {
-                        const cell = document.getElementById(`${absentTeacher}-p${task.period}`);
+                        // ✅ FIX 3: TARGET THE VISIBLE CELL
+                        // We use attribute selector [id="..."] to strictly find the ID within this container, even if duplicate exists
+                        const cellId = `${absentTeacher}-p${task.period}`;
+                        const cell = substitutionFormContainer.querySelector(`[id="${cellId}"]`);
+                        
                         if (cell) {
                             // Update UI
                             cell.innerHTML = task.substitute;
@@ -788,8 +796,8 @@ function openSubstitutionForm(note) {
             const sub = document.getElementById('manual-sub').value;
             const targetClass = document.getElementById('class-section').value;
             
-            // Find cell based on text match (rough)
-            const rows = document.querySelectorAll('#teacher-schedule tbody tr');
+            // ✅ FIX 4: Find cell inside container
+            const rows = substitutionFormContainer.querySelectorAll('#teacher-schedule tbody tr');
             let found = false;
             rows.forEach(tr => {
                 if (tr.cells[0].textContent === absent) {
@@ -809,21 +817,25 @@ function openSubstitutionForm(note) {
 
         // 2. Undo
         document.getElementById('undo-btn').onclick = () => {
-            if (historyStack.length > 0) document.querySelector('#teacher-schedule tbody').innerHTML = historyStack.pop();
+            // ✅ FIX 5: Find the correct tbody for undo
+            const tbody = substitutionFormContainer.querySelector('#teacher-schedule tbody');
+            if (historyStack.length > 0 && tbody) tbody.innerHTML = historyStack.pop();
         };
 
         // 3. Reset
         document.getElementById('reset-btn').onclick = () => {
             if (confirm("Reset Table?")) {
                 saveState();
-                document.querySelector('#teacher-schedule tbody').innerHTML = initialHTML;
+                const tbody = substitutionFormContainer.querySelector('#teacher-schedule tbody');
+                if(tbody) tbody.innerHTML = initialHTML;
                 document.getElementById('resultsContainer').innerHTML = '';
             }
         };
 
         // 4. Edit Mode
         document.getElementById('toggle-edit-btn').onclick = function() {
-            const cells = document.querySelectorAll('.schedule-cell');
+            // ✅ FIX 6: Toggle edit on cells inside container only
+            const cells = substitutionFormContainer.querySelectorAll('.schedule-cell');
             const isEd = cells[0].contentEditable === "true";
             cells.forEach(c => {
                 c.contentEditable = !isEd;
@@ -843,7 +855,8 @@ function openSubstitutionForm(note) {
             reader.onload = (event) => {
                 const workbook = XLSX.read(new Uint8Array(event.target.result), { type: 'array' });
                 const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
-                const tbody = document.querySelector('#teacher-schedule tbody');
+                // ✅ FIX 7: Update the visible table
+                const tbody = substitutionFormContainer.querySelector('#teacher-schedule tbody');
                 tbody.innerHTML = '';
                 // Rebuild table from Excel
                 rows.slice(1).forEach((rowData) => {
@@ -864,46 +877,7 @@ function openSubstitutionForm(note) {
         });
 
     }, 50);
-    // --- 1. PRE-CALCULATE TABLE ROWS (The Fix for Missing Table) ---
-    // We generate the HTML string here instead of trying to append elements later.
-    let tableRowsHTML = "";
-    
-    // Check if we have saved data first
-    if (note.scheduleData && note.scheduleData.includes('<tr')) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = note.scheduleData;
-        const savedBody = tempDiv.querySelector('tbody');
-        if (savedBody) tableRowsHTML = savedBody.innerHTML;
-    } 
-    
-    // If no saved data, build fresh rows immediately
-    if (!tableRowsHTML) {
-        const realisticSubjects = ['9-A (Math)', '10-B (Sci)', '11-A (Eng)', '12-A (Hist)', 'Library', 'Games'];
-        
-        for (let i = 1; i <= 35; i++) {
-            const tName = `Teacher ${i}`;
-            let row = `<tr><td style="padding:12px; border-bottom:1px solid #1e293b; color:white; font-weight:600;">${tName}</td>`;
-            
-            for (let p = 1; p <= 9; p++) {
-                const isBusy = Math.random() > 0.5;
-                let content = "Free";
-                let color = "#475569";
-
-                if (isBusy) {
-                    content = realisticSubjects[Math.floor(Math.random() * realisticSubjects.length)];
-                    color = "#cbd5e1";
-                    if (content === 'Library' || content === 'Games') color = '#a5b4fc';
-                }
-                // Add cell HTML to the row string
-                row += `<td id="${tName}-p${p}" class="schedule-cell" style="padding:12px; border-bottom:1px solid #1e293b; color:${color};">${content}</td>`;
-            }
-            row += `</tr>`;
-            tableRowsHTML += row; 
-        }
-    }
 }
-
-
 class SubstitutionManager {
     constructor(note) {
         this.note = note;
