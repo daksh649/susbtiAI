@@ -275,9 +275,12 @@ def reset_memory():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+
+
+with app.app_context():
+    db.create_all()
+    print("✅ NEXUS AI SERVER ONLINE")
 # --- 6. MAIN EXECUTION ---
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    print("✅ NEXUS AI SERVER ONLINE")
+
     app.run(debug=True, port=5001)
