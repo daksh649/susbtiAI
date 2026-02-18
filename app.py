@@ -5,21 +5,26 @@ import time
 from flask import Flask, render_template, request, jsonify, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 
+# --- 1. INITIALIZE APP & DATABASE CONFIGURATION ---
 app = Flask(__name__)
 
-# --- 1. INTELLIGENT DATABASE SWITCH ---
+# Get the database URL from the cloud (Render) or use a local file
 database_url = os.environ.get('DATABASE_URL')
-if database_url:
-    if database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
+# Fix for Render's URL format (postgres:// -> postgresql://)
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+# Apply the configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize the Database (DO THIS ONLY ONCE)
 db = SQLAlchemy(app)
 
-# --- 2. MODELS ---
+# --- 2. DATABASE MODELS (THE TABLES) ---
+
+# Model 1: For Sharing Notes
 class SharedContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(100), unique=True, nullable=False)
@@ -27,7 +32,21 @@ class SharedContent(db.Model):
     title = db.Column(db.String(200), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-# --- 3. METADATA ---
+# Model 2: The Master Log (History)
+class MasterLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    action_type = db.Column(db.String(50), nullable=False)
+    details = db.Column(db.Text, nullable=False)
+
+    def to_dict(self):
+        return {
+            "time": self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "type": self.action_type,
+            "details": self.details
+        }
+
+# --- 3. METADATA & LOGIC ---
 SUBJECT_PROXIMITY_MATRIX = {
     "Math": {"Math": 1.0, "Science": 0.85, "English": 0.2, "History": 0.1, "Sports": 0.05},
     "Science": {"Science": 1.0, "Math": 0.80, "History": 0.3, "English": 0.2, "Sports": 0.1},
@@ -52,7 +71,7 @@ TEACHER_METADATA = {
     } for i in range(1, 36)
 }
 
-# --- 4. THE GRANDMASTER ENGINE (VERBOSE "MATRIX" MODE) ---
+# --- 4. THE GRANDMASTER ENGINE ---
 class GrandmasterSolver:
     def __init__(self, absent_teacher, schedule_snapshot):
         self.absent_teacher = absent_teacher
@@ -66,64 +85,34 @@ class GrandmasterSolver:
     def solve(self):
         print(f"\n" + "="*80)
         print(f"🧠 NEXUS AI: INITIALIZING DEEP SEARCH PROTOCOL")
-        print(f"🎯 OBJECTIVE: Fill absence for {self.absent_teacher}")
-        print(f"="*80)
-
-        tasks = self._get_missing_periods()
         
-        # Sort hard problems first (Constraint Propagation)
+        tasks = self._get_missing_periods()
         tasks.sort(key=lambda t: self._count_available_teachers(t['p_idx']))
         
-        print(f"📊 ANALYSIS: Identified {len(tasks)} conflict periods.")
-        print(f"🚀 ENGINE STARTING... (Check terminal stream for logic)")
-        
-        # Start the Recursive Search
         self._backtrack(tasks, {})
-        
-        print(f"\n" + "="*80)
-        print(f"✅ SOLUTION FOUND")
-        print(f"⚡ Simulations Run: {self.nodes_explored}")
-        print(f"🚫 Dead Ends Pruned: {self.backtracks}")
-        print(f"🛡️ Constraint Rejections: {self.constraints_failed}")
-        print(f"="*80 + "\n")
         
         return self._format_solution()
 
     def _backtrack(self, remaining_tasks, current_assignment):
         self.nodes_explored += 1
         
-        # --- THE "HACKER" LOGIC STREAM ---
-        # This makes the terminal scream with intelligence
-        if self.nodes_explored % 5 == 0: # Prints fast but readable
-            depth = len(current_assignment)
-            print(f"   [SIMULATING] Timeline #{self.nodes_explored} | Depth: {depth} | Constraints Checked: {self.constraints_failed}")
-
-        # Base Case: Solution Found
         if not remaining_tasks:
             total_score = self._calculate_global_utility(current_assignment)
             if total_score > self.max_utility:
-                print(f"   🌟 OPTIMAL BRANCH FOUND! Score: {total_score} (Updating Best Path...)")
                 self.max_utility = total_score
                 self.best_solution = current_assignment.copy()
             return
 
         current_task = remaining_tasks[0]
-        
-        # Get Valid Candidates
         candidates = self._get_ordered_candidates(current_task, current_assignment)
 
         if not candidates:
-            # Dead End Logic
-            print(f"      ❌ CRITICAL FAILURE at Period {current_task['period']}. No valid teachers. BACKTRACKING...")
             self.backtracks += 1
             return
 
         for teacher in candidates:
-            # Recursive Step
             current_assignment[current_task['period']] = teacher
             self._backtrack(remaining_tasks[1:], current_assignment)
-            
-            # Backtrack Step
             del current_assignment[current_task['period']]
 
     def _get_missing_periods(self):
@@ -146,25 +135,15 @@ class GrandmasterSolver:
         for name, sched in self.schedule.items():
             if name == self.absent_teacher: continue
             
-            # --- CONSTRAINT VISUALIZATION ---
-            
-            # Constraint 1: Availability
             if sched[task['p_idx']].upper() != "FREE": 
                 self.constraints_failed += 1
-                # Only print specific rejections occasionally to avoid total spam
-                if self.nodes_explored % 50 == 0:
-                    print(f"      🚫 REJECT: {name} (Busy in Period {task['period']})")
                 continue
             
-            # Constraint 2: Workload (Equity)
             current_subs = sum(1 for t in current_assignment.values() if t == name)
             if current_subs >= 2: 
                 self.constraints_failed += 1
-                if self.nodes_explored % 50 == 0:
-                    print(f"      ⚠️ REJECT: {name} (Overworked - Burnout Prevention)")
                 continue 
 
-            # Scoring Logic (Vector Similarity)
             score = 0
             c_sub = TEACHER_METADATA.get(name, {}).get('subject', 'General')
             a_sub = TEACHER_METADATA.get(self.absent_teacher, {}).get('subject', 'General')
@@ -191,18 +170,31 @@ class GrandmasterSolver:
             return []
         formatted = []
         for p_num, teacher in self.best_solution.items():
-            # Shows the massive effort to the frontend user
-            stats = f"⚡ Checked {self.nodes_explored} Futures"
+            # Create a log entry automatically when solution is found
+            log_entry = MasterLog(
+                action_type="AI_AUTO",
+                details=f"Assigned {teacher} to Period {p_num} for {self.absent_teacher}"
+            )
+            db.session.add(log_entry)
+            
             formatted.append({
                 "period": p_num,
                 "substitute": teacher,
                 "status": "SUCCESS",
                 "score": 99, 
-                "details": stats 
+                "details": f"Checked {self.nodes_explored} Futures" 
             })
+        
+        # Save logs to database
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            
         return sorted(formatted, key=lambda x: x['period'])
 
 # --- 5. FLASK ROUTES ---
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -210,7 +202,6 @@ def home():
 @app.route('/api/process', methods=['POST'])
 def api_process():
     data = request.json
-    # Invoke the Grandmaster Engine
     solver = GrandmasterSolver(data.get('absentTeacher'), data.get('schedule'))
     assignments = solver.solve()
     return jsonify({"assignments": assignments})
@@ -253,10 +244,6 @@ def view_shared_note(token):
             body {{ background: #020617; color: #cbd5e1; font-family: sans-serif; display: flex; justify-content: center; padding: 40px; }}
             .container {{ width: 100%; max-width: 1400px; }}
             h1 {{ color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 20px; }}
-            table {{ width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; }}
-            th, td {{ padding: 14px 10px; border: 1px solid #334155; text-align: center; }}
-            th {{ background: #0f172a; color: #38bdf8; font-weight: 700; }}
-            .highlight {{ background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid #0ea5e9; }}
         </style>
     </head>
     <body>
@@ -269,9 +256,28 @@ def view_shared_note(token):
     """
     return render_template_string(html)
 
+# --- NEW HISTORY ROUTES ---
+@app.route('/api/history', methods=['GET'])
+def get_history():
+    try:
+        logs = MasterLog.query.order_by(MasterLog.timestamp.desc()).limit(50).all()
+        return jsonify([log.to_dict() for log in logs])
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route('/api/reset-memory', methods=['POST'])
+def reset_memory():
+    try:
+        db.session.query(MasterLog).delete()
+        db.session.commit()
+        return jsonify({"message": "Memory Wiped Successfully."})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# --- 6. MAIN EXECUTION ---
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     print("✅ NEXUS AI SERVER ONLINE")
-    print("🧠 GRANDMASTER ENGINE: READY")
     app.run(debug=True, port=5001)
